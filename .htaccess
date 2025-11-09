@@ -1,0 +1,23 @@
+# PHP 8.1 çalıştırıcı
+<IfModule lsapi_module>
+  SetHandler application/x-lsphp81
+</IfModule>
+
+# ---- Yönlendirmeler ----
+RewriteEngine On
+
+# 1) /api altındaki GERÇEK PHP dosyalarını yönlendirmeden muaf tut
+RewriteCond %{REQUEST_URI} ^/api/ [NC]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# 2) Var olan dosya/klasör ise olduğu gibi servis et
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d 
+RewriteRule ^ - [L]
+
+# 3) www -> kök domaine yönlendir (https://xn--reteneller-8db.com)
+RewriteCond %{HTTP_HOST} ^www\.xn--reteneller-8db\.com$ [NC]
+RewriteRule ^(.*)$ https://xn--reteneller-8db.com/$1 [R=301,L]
+
+# (İsteğe bağlı SPA fallback kullanmıyoruz; çoklu sayfa yapısına zarar vermesin)
